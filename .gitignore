@@ -3,3 +3,6 @@ venv/
 __pycache__/
 .env
 *.pyc
+
+app_backup.py
+grafana-backup.db

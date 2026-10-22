@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 import time
 
@@ -40,7 +40,7 @@ def record_metrics(response):
 
 @app.route("/")
 def home():
-    return jsonify({"message": "POS System is running"})
+    return render_template("index.html")
 
 @app.route("/products")
 def get_products():

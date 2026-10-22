@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý chung cư / căn hộ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <h2>🏢 Apartment Manager</h2>
+            <nav>
+                <a href="/" class="active">📊 Tổng quan</a>
+                <a href="#apartments">🏠 Quản lý căn hộ</a>
+                <a href="#residents">👥 Cư dân</a>
+                <a href="#contracts">📄 Hợp đồng</a>
+                <a href="#invoices">💳 Hóa đơn</a>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <header>
+                <div>
+                    <h1>Quản lý chung cư / căn hộ</h1>
+                    <p>Hệ thống quản lý và giám sát chung cư</p>
+                </div>
+                <span class="status">● Hệ thống hoạt động</span>
+            </header>
+
+            <section class="stats">
+                <div class="stat-card">
+                    <p>Tổng số căn hộ</p>
+                    <h2>120</h2>
+                </div>
+                <div class="stat-card">
+                    <p>Căn hộ đang sử dụng</p>
+                    <h2>85</h2>
+                </div>
+                <div class="stat-card">
+                    <p>Căn hộ còn trống</p>
+                    <h2>35</h2>
+                </div>
+                <div class="stat-card">
+                    <p>Tổng số cư dân</p>
+                    <h2>240</h2>
+                </div>
+            </section>
+
+            <section class="panel" id="apartments">
+                <h2>Danh sách căn hộ</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã căn hộ</th>
+                            <th>Tầng</th>
+                            <th>Diện tích</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>A101</td>
+                            <td>1</td>
+                            <td>65 m²</td>
+                            <td><span class="occupied">Đang sử dụng</span></td>
+                        </tr>
+                        <tr>
+                            <td>A102</td>
+                            <td>1</td>
+                            <td>70 m²</td>
+                            <td><span class="available">Còn trống</span></td>
+                        </tr>
+                        <tr>
+                            <td>A201</td>
+                            <td>2</td>
+                            <td>80 m²</td>
+                            <td><span class="occupied">Đang sử dụng</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            <p class="note">Dữ liệu hiện tại chỉ dùng để minh họa giao diện.</p>
+        </main>
+    </div>
+</body>
+</html>
