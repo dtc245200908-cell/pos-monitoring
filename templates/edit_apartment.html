@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sửa căn hộ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main style="max-width: 700px; margin: 50px auto; padding: 20px;">
+        <section class="panel">
+            <h2>✏️ Chỉnh sửa căn hộ {{ apartment["code"] }}</h2>
+
+            <form
+                action="{{ url_for('edit_apartment', apartment_id=apartment['id']) }}"
+                method="POST"
+                class="apartment-form"
+            >
+                <div class="form-group">
+                    <label for="code">Mã căn hộ</label>
+                    <input type="text" id="code" name="code"
+                           value="{{ apartment['code'] }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="floor">Tầng</label>
+                    <input type="number" id="floor" name="floor" min="1"
+                           value="{{ apartment['floor'] }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="area">Diện tích (m²)</label>
+                    <input type="number" id="area" name="area"
+                           min="0.1" step="0.1"
+                           value="{{ apartment['area'] }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Trạng thái</label>
+                    <select id="status" name="status">
+                        <option value="Còn trống"
+                            {% if apartment["status"] == "Còn trống" %}selected{% endif %}>
+                            Còn trống
+                        </option>
+                        <option value="Đang sử dụng"
+                            {% if apartment["status"] == "Đang sử dụng" %}selected{% endif %}>
+                            Đang sử dụng
+                        </option>
+                    </select>
+                </div>
+
+                <button type="submit" class="add-btn">
+                    Lưu thay đổi
+                </button>
+
+                <a href="/" style="margin-left: 15px;">Hủy và quay lại</a>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

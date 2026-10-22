@@ -104,5 +104,91 @@ def add_apartment():
 
     return redirect("/")
 
+@app.route("/apartments/<int:apartment_id>/edit", methods=["GET", "POST"])
+def edit_apartment(apartment_id):
+    
+    if request.method == "GET":
+        with get_connection() as conn:
+            apartment = conn.execute(
+                "SELECT * FROM apartments WHERE id = ?",
+                (apartment_id,)
+            ).fetchone()
+
+        if apartment is None:
+            return jsonify({"error": "Không tìm thấy căn hộ"}), 404
+
+        return render_template("edit_apartment.html", apartment=apartment)
+    import sqlite3
+
+    code = request.form.get("code", "").strip().upper()
+    floor_text = request.form.get("floor", "").strip()
+    area_text = request.form.get("area", "").strip()
+    status = request.form.get("status", "").strip()
+
+    if not code or not floor_text or not area_text:
+        return jsonify({"error": "Vui lòng nhập đầy đủ thông tin"}), 400
+
+    try:
+        floor = int(floor_text)
+        area = float(area_text)
+    except ValueError:
+        return jsonify({"error": "Tầng hoặc diện tích không hợp lệ"}), 400
+
+    if floor < 1 or not (0 < area < float("inf")):
+        return jsonify({"error": "Tầng hoặc diện tích không hợp lệ"}), 400
+
+    if status not in ("Còn trống", "Đang sử dụng"):
+        return jsonify({"error": "Trạng thái không hợp lệ"}), 400
+
+    try:
+        with get_connection() as conn:
+            cursor = conn.execute(
+                """UPDATE apartments
+                   SET code = ?, floor = ?, area = ?, status = ?
+                   WHERE id = ?""",
+                (code, floor, area, status, apartment_id)
+            )
+            if cursor.rowcount == 0:
+                return jsonify({"error": "Không tìm thấy căn hộ"}), 404
+            conn.commit()
+    except sqlite3.IntegrityError:
+        return jsonify({"error": "Mã căn hộ đã tồn tại"}), 409
+
+    return redirect("/")
+
+
+
+@app.route("/apartments/<int:apartment_id>/delete", methods=["POST"])
+def delete_apartment(apartment_id):
+    with get_connection() as conn:
+        apartment = conn.execute(
+            "SELECT * FROM apartments WHERE id = ?",
+            (apartment_id,)
+        ).fetchone()
+
+        if apartment is None:
+            return jsonify({"error": "Không tìm thấy căn hộ"}), 404
+
+        if apartment["status"] == "Đang sử dụng":
+            return jsonify({
+                "error": "Không thể xóa căn hộ đang sử dụng"
+            }), 400
+
+        conn.execute(
+            "DELETE FROM apartments WHERE id = ?",
+            (apartment_id,)
+        )
+        conn.commit()
+
+    return redirect("/")
+
+
+
+@app.route("/metrics")
+def metrics():
+    return generate_latest(), 200, {
+        "Content-Type": CONTENT_TYPE_LATEST
+    }
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001)
+

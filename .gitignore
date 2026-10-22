@@ -9,3 +9,4 @@ grafana-backup.db
 
 # Local apartment database
 apartment.db
+apartment-backup.db

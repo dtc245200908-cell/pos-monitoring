@@ -95,6 +95,7 @@
                             <th>Tầng</th>
                             <th>Diện tích</th>
                             <th>Trạng thái</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     
@@ -111,10 +112,30 @@
                 <span class="available">Còn trống</span>
             {% endif %}
         </td>
+        
+<td>
+    <a href="/apartments/{{ apartment['id'] }}/edit"
+       class="edit-btn">
+        ✏️ Sửa
+    </a>
+
+    <form
+        action="/apartments/{{ apartment['id'] }}/delete"
+        method="POST"
+        style="display:inline; margin-left:12px;"
+        onsubmit="return confirm('Bạn có chắc chắn muốn xóa căn hộ {{ apartment['code'] }} không?');"
+    >
+        <button type="submit"
+                style="background:#dc2626; color:white; border:none; padding:7px 12px; border-radius:5px; cursor:pointer;">
+            🗑️ Xóa
+        </button>
+    </form>
+</td>
+
     </tr>
     {% else %}
     <tr>
-        <td colspan="4" style="text-align:center;">
+        <td colspan="5" style="text-align:center;">
             Chưa có căn hộ nào trong hệ thống.
         </td>
     </tr>
