@@ -25,6 +25,17 @@ def init_db():
         """)
         conn.commit()
 
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS residents (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                full_name TEXT NOT NULL,
+                phone TEXT NOT NULL,
+                apartment_id INTEGER NOT NULL,
+                FOREIGN KEY (apartment_id) REFERENCES apartments(id)
+            )
+        """)
+
+
 
 if __name__ == "__main__":
     init_db()

@@ -62,6 +62,157 @@ def home():
         available=available
     )
 
+@app.route("/residents")
+def residents_page():
+    with get_connection() as conn:
+        residents = conn.execute("""
+            SELECT residents.id,
+                   residents.full_name,
+                   residents.phone,
+                   apartments.code AS apartment_code
+            FROM residents
+with get_connection() as conn:
+    apartments = conn.execute(
+        "SELECT * FROM apartments ORDER BY id DESC"
+    ).fetchall()with get_connection() as conn:
+    apartments = conn.execute(
+        "SELECT * FROM apartments ORDER BY id DESC"
+    ).fetchall()with get_connection() as conn:
+    apartments = conn.execute(
+        "SELECT * FROM apartments ORDER BY id DESC"
+    ).fetchall()            JOIN apartments
+              ON residents.apartment_id = apartments.id
+            ORDER BY residents.id DESC
+        """).fetchall()
+
+        apartments = conn.execute(
+            "SELECT id, code FROM apartments ORDER BY code"
+        ).fetchall()
+
+    return render_template(
+        "residents.html",
+        residents=residents,
+        apartments=apartments
+    )
+
+
+
+@app.route("/residents/add", methods=["POST"])
+def add_resident():
+    full_name = request.form.get("full_name", "").strip()
+    phone = request.form.get("phone", "").strip()
+    apartment_text = request.form.get("apartment_id", "").strip()
+
+    if not full_name or not phone or not apartment_text:
+        return jsonify({"error": "Vui lòng nhập đầy đủ thông tin"}), 400
+
+    if not phone.isdigit() or not (9 <= len(phone) <= 11):
+        return jsonify({"error": "Số điện thoại không hợp lệ"}), 400
+
+    try:
+        apartment_id = int(apartment_text)
+    except ValueError:
+        return jsonify({"error": "Căn hộ không hợp lệ"}), 400
+
+    with get_connection() as conn:
+        apartment = conn.execute(
+            "SELECT id FROM apartments WHERE id = ?",
+            (apartment_id,)
+        ).fetchone()
+
+        if apartment is None:
+            return jsonify({"error": "Không tìm thấy căn hộ"}), 404
+
+        conn.execute(
+            """INSERT INTO residents (full_name, phone, apartment_id)
+               VALUES (?, ?, ?)""",
+            (full_name, phone, apartment_id)
+        )
+        conn.commit()
+
+    return redirect("/residents")
+
+@app.route("/residents/<int:resident_id>/edit", methods=["GET", "POST"])
+def edit_resident(resident_id):
+    with get_connection() as conn:
+        resident = conn.execute(
+            "SELECT * FROM residents WHERE id = ?",
+            (resident_id,)
+        ).fetchone()
+
+        if resident is None:
+            return "Không tìm thấy cư dân", 404
+
+        if request.method == "POST":
+            full_name = request.form.get("full_name", "").strip()
+            phone = request.form.get("phone", "").strip()
+            apartment_text = request.form.get("apartment_id", "").strip()
+
+            if not full_name or not phone or not apartment_text:
+                return "Vui lòng nhập đầy đủ thông tin", 400
+
+            if not phone.isdigit() or not (9 <= len(phone) <= 11):
+                return "Số điện thoại không hợp lệ", 400
+
+            try:
+                apartment_id = int(apartment_text)
+            except ValueError:
+                return "Căn hộ không hợp lệ", 400
+
+            apartment = conn.execute(
+                "SELECT id FROM apartments WHERE id = ?",
+                (apartment_id,)
+            ).fetchone()
+
+            if apartment is None:
+                return "Không tìm thấy căn hộ", 404
+
+            conn.execute(
+                """UPDATE residents
+                   SET full_name = ?, phone = ?, apartment_id = ?
+                   WHERE id = ?""",
+                (full_name, phone, apartment_id, resident_id)
+            )
+            conn.commit()
+
+            return redirect("/residents")
+
+        apartments = conn.execute(
+            "SELECT id, code FROM apartments ORDER BY code"
+        ).fetchall()
+
+    return render_template(
+        "edit_resident.html",
+        resident=resident,
+        apartments=apartments
+    )
+
+@app.route("/residents/<int:resident_id>/delete", methods=["POST"])
+def delete_resident(resident_id):
+    with get_connection() as conn:
+        resident = conn.execute(
+            "SELECT id FROM residents WHERE id = ?",
+            (resident_id,)
+        ).fetchone()
+
+        if resident is None:
+            return "Không tìm thấy cư dân", 404
+
+        conn.execute(
+            "DELETE FROM residents WHERE id = ?",
+            (resident_id,)
+        )
+        conn.commit()
+
+    return redirect("/residents")
+
+
+
+
+
+
+
+
 @app.route("/products")
 def get_products():
     return jsonify(products)

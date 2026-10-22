@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sửa thông tin cư dân</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <h2>🏢 Apartment Manager</h2>
+            <nav>
+                <a href="/">📊 Tổng quan</a>
+                <a href="/#apartments">🏠 Quản lý căn hộ</a>
+                <a href="/residents" class="active">👥 Cư dân</a>
+                <a href="/#contracts">📄 Hợp đồng</a>
+                <a href="/#invoices">💳 Hóa đơn</a>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <header>
+                <div>
+                    <h1>✏️ Sửa thông tin cư dân</h1>
+                    <p>Cập nhật thông tin cư dân trong chung cư</p>
+                </div>
+            </header>
+
+            <section class="panel">
+                <h2>Thông tin cư dân</h2>
+
+                <form method="POST" class="apartment-form">
+                    <div class="form-group">
+                        <label for="full_name">Họ và tên</label>
+                        <input
+                            type="text"
+                            id="full_name"
+                            name="full_name"
+                            value="{{ resident['full_name'] }}"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Số điện thoại</label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            value="{{ resident['phone'] }}"
+                            pattern="[0-9]{9,11}"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="apartment_id">Căn hộ</label>
+                        <select id="apartment_id"
+                                name="apartment_id"
+                                required>
+                            {% for apartment in apartments %}
+                            <option
+                                value="{{ apartment['id'] }}"
+                                {% if apartment['id'] == resident['apartment_id'] %}
+                                selected
+                                {% endif %}>
+                                {{ apartment['code'] }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit" class="add-btn">
+                        💾 Lưu thay đổi
+                    </button>
+
+                    <a href="/residents">
+                        Hủy và quay lại
+                    </a>
+                </form>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
+
