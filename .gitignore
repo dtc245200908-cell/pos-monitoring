@@ -6,3 +6,6 @@ __pycache__/
 
 app_backup.py
 grafana-backup.db
+
+# Local apartment database
+apartment.db

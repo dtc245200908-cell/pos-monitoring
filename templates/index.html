@@ -32,21 +32,59 @@
             <section class="stats">
                 <div class="stat-card">
                     <p>Tổng số căn hộ</p>
-                    <h2>120</h2>
+                    <h2>{{ total }}</h2>
                 </div>
                 <div class="stat-card">
                     <p>Căn hộ đang sử dụng</p>
-                    <h2>85</h2>
+                    <h2>{{ occupied }}</h2>
                 </div>
                 <div class="stat-card">
                     <p>Căn hộ còn trống</p>
-                    <h2>35</h2>
+                    <h2>{{ available }}</h2>
                 </div>
                 <div class="stat-card">
                     <p>Tổng số cư dân</p>
-                    <h2>240</h2>
+                    <h2>-</h2>
                 </div>
             </section>
+
+            
+<section class="panel" style="margin-bottom: 25px;">
+    <h2>➕ Thêm căn hộ mới</h2>
+
+    <form action="/apartments/add" method="POST" class="apartment-form">
+        <div class="form-group">
+            <label for="code">Mã căn hộ</label>
+            <input type="text" id="code" name="code"
+                   placeholder="Ví dụ: A101" required>
+        </div>
+
+        <div class="form-group">
+            <label for="floor">Tầng</label>
+            <input type="number" id="floor" name="floor"
+                   min="1" placeholder="Ví dụ: 1" required>
+        </div>
+
+        <div class="form-group">
+            <label for="area">Diện tích (m²)</label>
+            <input type="number" id="area" name="area"
+                   min="0.1" step="0.1"
+                   placeholder="Ví dụ: 65" required>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Trạng thái</label>
+            <select id="status" name="status">
+                <option value="Còn trống">Còn trống</option>
+                <option value="Đang sử dụng">Đang sử dụng</option>
+            </select>
+        </div>
+
+        <button type="submit" class="add-btn">
+            + Thêm căn hộ
+        </button>
+    </form>
+</section>
 
             <section class="panel" id="apartments">
                 <h2>Danh sách căn hộ</h2>
@@ -59,26 +97,30 @@
                             <th>Trạng thái</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>A101</td>
-                            <td>1</td>
-                            <td>65 m²</td>
-                            <td><span class="occupied">Đang sử dụng</span></td>
-                        </tr>
-                        <tr>
-                            <td>A102</td>
-                            <td>1</td>
-                            <td>70 m²</td>
-                            <td><span class="available">Còn trống</span></td>
-                        </tr>
-                        <tr>
-                            <td>A201</td>
-                            <td>2</td>
-                            <td>80 m²</td>
-                            <td><span class="occupied">Đang sử dụng</span></td>
-                        </tr>
-                    </tbody>
+                    
+<tbody>
+    {% for apartment in apartments %}
+    <tr>
+        <td>{{ apartment["code"] }}</td>
+        <td>{{ apartment["floor"] }}</td>
+        <td>{{ apartment["area"] }} m²</td>
+        <td>
+            {% if apartment["status"] == "Đang sử dụng" %}
+                <span class="occupied">Đang sử dụng</span>
+            {% else %}
+                <span class="available">Còn trống</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="4" style="text-align:center;">
+            Chưa có căn hộ nào trong hệ thống.
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+
                 </table>
             </section>
             <p class="note">Dữ liệu hiện tại chỉ dùng để minh họa giao diện.</p>
