@@ -1,0 +1,9 @@
+services:
+  pos_app:
+    build: .
+    container_name: pos-monitoring-app
+    ports:
+      - "127.0.0.1:5002:5001"
+    volumes:
+      - ./apartment.db:/app/apartment.db
+    restart: unless-stopped
