@@ -1,9 +1,92 @@
+# POS MONITORING - DOCKER COMPOSE
+# Flask + Prometheus + Grafana + Node Exporter
+#
+# Docker stack độc lập với các dịch vụ Ubuntu hiện có.
+# Không chạy đồng thời với ứng dụng dùng chung apartment.db.
+
+name: pos-monitoring
+
 services:
+
+  # 1. FLASK APPLICATION
   pos_app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: pos-monitoring-app
     ports:
       - "127.0.0.1:5002:5001"
     volumes:
       - ./apartment.db:/app/apartment.db
+    networks:
+      - monitoring
     restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:5001/metrics')"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # 2. PROMETHEUS
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: pos-prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=15d"
+    ports:
+      - "127.0.0.1:9091:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - monitoring
+    depends_on:
+      pos_app:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # 3. GRAFANA
+  grafana:
+    image: grafana/grafana:latest
+    container_name: pos-grafana
+    ports:
+      - "127.0.0.1:3002:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD in .env}
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - monitoring
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  # 4. NODE EXPORTER
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: pos-node-exporter
+    command:
+      - "--path.rootfs=/host"
+    volumes:
+      - /:/host:ro,rslave
+    ports:
+      - "127.0.0.1:9101:9100"
+    networks:
+      - monitoring
+    restart: unless-stopped
+
+networks:
+  monitoring:
+    driver: bridge
+
+volumes:
+  prometheus_data:
+  grafana_data:
