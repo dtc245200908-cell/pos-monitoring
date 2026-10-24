@@ -46,6 +46,7 @@ Mở Ubuntu và thực hiện:
 1. `cd ~/pos-monitoring`
 2. `source venv/bin/activate`
 3. `python app.py`
+4. 'docker compose ps "
 
 Nếu cổng 5001 đã được sử dụng và POS vẫn trả HTTP 200,
 không cần khởi động thêm một tiến trình khác.
