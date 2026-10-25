@@ -1,10 +1,10 @@
-# HỆ THỐNG QUẢN LÝ CỬA HÀNG POS - MONITORING
+# Hệ thống Quản lý Chung cư / Căn hộ
 
 **Python | Ubuntu | Prometheus | Grafana | Node Exporter**
 
 ## Giới thiệu dự án
 
-Hệ thống quản lý cửa hàng POS bằng Python, kết hợp giám sát
+Hệ thống quản lý Chung cư / Căn hộ bằng Python, kết hợp giám sát
 ứng dụng và tài nguyên Ubuntu bằng Prometheus, Grafana và Node Exporter.
 
 ## Truy cập nhanh
